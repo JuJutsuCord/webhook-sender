@@ -8,24 +8,32 @@
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      background-color: #f0f0f0;
+      background-color: #1a1a1a; /* Dark background color */
+      color: #ffffff; /* Light text color */
     }
 
     #app {
       display: flex;
-      flex-direction: column;
-      align-items: center;
+      flex-direction: row; /* Change to row to put embed preview on the right side */
+      align-items: flex-start; /* Align items to the top */
       margin-top: 20px;
+    }
+
+    #editForm {
+      background-color: #2a2a2a; /* Dark form background color */
+      padding: 20px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Dark box shadow */
     }
 
     #richEmbedContainer {
       max-width: 520px;
       display: grid;
-      background: #ffffff;
+      background: #2a2a2a; /* Dark container background color */
       border-radius: 4px;
       border-left: 4px solid #3498db;
       margin: 20px;
       padding: 20px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Dark box shadow */
     }
 
     input, textarea {
@@ -33,6 +41,9 @@
       padding: 8px;
       width: 100%;
       box-sizing: border-box;
+      background-color: #3a3a3a; /* Dark input background color */
+      color: #ffffff; /* Light text color */
+      border: 1px solid #555; /* Border color */
     }
 
     button {
@@ -74,7 +85,6 @@
   <script src="dist/EmbedField.js"></script>
   <script src="dist/EmbedAuthor.js"></script>
 
-  
   <script>
     const React = {
       createElement: (type, props, ...children) => {
@@ -100,7 +110,7 @@
 
     const useObserver = callback => callback();
 
-    const RichEmbedContainer = ({ children }) => styled.div({ maxWidth: '520px', display: 'grid', background: '#ffffff', borderRadius: '4px', borderLeft: '4px solid #3498db', margin: '20px', padding: '20px' });
+    const RichEmbedContainer = ({ children }) => styled.div({ maxWidth: '520px', display: 'grid', background: '#2a2a2a', borderRadius: '4px', borderLeft: '4px solid #3498db', margin: '20px', padding: '20px', boxShadow: '0 0 10px rgba(0, 0, 0, 0.5)' });
 
     const RichEmbed = ({ embed }) => useObserver(() => {
       const container = RichEmbedContainer({});
@@ -113,40 +123,28 @@
     });
 
     const EmbedAuthor = ({ embed }) => useObserver(() => {
-      const container = styled.div({ margin: '8px 0 0' });
+      const container = styled.div({ margin: '8px 0 0', color: '#ffffff' });
       container.textContent = `Author: ${embed.author}`;
       return container;
     });
 
     const EmbedField = ({ field }) => useObserver(() => {
-      const container = styled.div({ margin: '8px 0 0' });
+      const container = styled.div({ margin: '8px 0 0', color: '#ffffff' });
       container.textContent = `${field.name}: ${field.value}`;
       return container;
     });
 
     const EmbedFooter = ({ embed }) => useObserver(() => {
-      const container = styled.div({ margin: '8px 0 0' });
+      const container = styled.div({ margin: '8px 0 0', color: '#ffffff' });
       container.textContent = `Footer: ${embed.footer}`;
       return container;
     });
 
     const EmbedGallery = ({ embed }) => useObserver(() => {
-      const container = styled.div({ margin: '8px 0 0' });
+      const container = styled.div({ margin: '8px 0 0', color: '#ffffff' });
       container.textContent = `Gallery: ${embed.gallery.join(', ')}`;
       return container;
     });
-
-    const embedData = {
-      author: 'John Doe',
-      title: 'Example Title',
-      description: 'This is an example description.',
-      fields: [
-        { name: 'Field 1', value: 'Value 1' },
-        { name: 'Field 2', value: 'Value 2' },
-      ],
-      footer: 'Example Footer',
-      gallery: ['Image 1', 'Image 2'],
-    };
 
     const appContainer = document.getElementById('app');
     const richEmbedContainer = RichEmbed({ embed: embedData });
