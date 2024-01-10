@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discord Webhook Sender</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #36393f;
+            color: white;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        .container {
+            text-align: center;
+            background-color: #2f3136;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        input,
+        textarea,
+        button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            background-color: #40444b;
+            color: white;
+            border: none;
+            border-radius: 4px;
+        }
+
+        button {
+            cursor: pointer;
+            background-color: #7289da;
+        }
+
+        .preview {
+            margin-top: 20px;
+            border: 1px solid #7289da;
+            padding: 10px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Discord Webhook Sender</h1>
+        <label>Webhook URL:</label>
+        <input type="text" id="webhookUrl" placeholder="Enter Discord Webhook URL">
+        <label>Message:</label>
+        <textarea id="message" placeholder="Enter your message"></textarea>
+        <label>File Attachment:</label>
+        <input type="file" id="fileInput">
+        <label>Embed Title:</label>
+        <input type="text" id="embedTitle" placeholder="Embed title">
+        <label>Embed Description:</label>
+        <textarea id="embedDescription" placeholder="Embed description"></textarea>
+        <label>Embed Image URL:</label>
+        <input type="text" id="embedImage" placeholder="Embed image URL">
+        <label>Username (for Profile):</label>
+        <input type="text" id="profileUsername" placeholder="Your username">
+        <label>Avatar URL (for Profile):</label>
+        <input type="text" id="profileAvatar" placeholder="Your avatar URL">
+        <button onclick="sendMessage()">Send Message</button>
+
+        <div class="preview" id="preview">
+            <h2>Webhook Message Preview</h2>
+            <div id="previewContent"></div>
+        </div>
+    </div>
+
+    <script>
+        async function sendMessage() {
+            const webhookUrl = document.getElementById('webhookUrl').value;
+            const message = document.getElementById('message').value;
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+            const embedTitle = document.getElementById('embedTitle').value;
+            const embedDescription = document.getElementById('embedDescription').value;
+            const embedImage = document.getElementById('embedImage').value;
+            const profileUsername = document.getElementById('profileUsername').value;
+            const profileAvatar = document.getElementById('profileAvatar').value;
+
+            try {
+                const formData = new FormData();
+                formData.append('content', message);
+                if (file) {
+                    formData.append('file', file);
+                }
+                if (embedTitle || embedDescription || embedImage) {
+                    const embed = {
+                        title: embedTitle,
+                        description: embedDescription,
+                        image: { url: embedImage },
+                    };
+                    formData.append('embeds', JSON.stringify([embed]));
+                }
+                if (profileUsername || profileAvatar) {
+                    formData.append('username', profileUsername);
+                    formData.append('avatar_url', profileAvatar);
+                }
+
+                const response = await fetch(webhookUrl, {
+                    method: 'POST',
+                    body: formData,
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+
+                alert('Message sent successfully!');
+                showPreview(message, embedTitle, embedDescription, embedImage, profileUsername, profileAvatar);
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to send message. Please check your webhook URL.');
+            }
+        }
+
+        function showPreview(message, embedTitle, embedDescription, embedImage, profileUsername, profileAvatar) {
+            const previewContent = document.getElementById('previewContent');
+            previewContent.innerHTML = '';
+
+            if (message) {
+                previewContent.innerHTML += `<p>${message}</p>`;
+            }
+
+            if (embedTitle || embedDescription || embedImage) {
+                previewContent.innerHTML += '<h3>Embed:</h3>';
+                if (embedTitle) {
+                    previewContent.innerHTML += `<p><strong>Title:</strong> ${embedTitle}</p>`;
+                }
+                if (embedDescription) {
+                    previewContent.innerHTML += `<p><strong>Description:</strong> ${embedDescription}</p>`;
+                }
+                if (embedImage) {
+                    previewContent.innerHTML += `<p><strong>Image:</strong> <img src="${embedImage}" alt="Embed Image"></p>`;
+                }
+            }
+
+            if (profileUsername || profileAvatar) {
+                previewContent.innerHTML += '<h3>Profile:</h3>';
+                if (profileUsername) {
+                    previewContent.innerHTML += `<p><strong>Username:</strong> ${profileUsername}</p>`;
+                }
+                if (profileAvatar) {
+                    previewContent.innerHTML += `<p><strong>Avatar:</strong> <img src="${profileAvatar}" alt="Avatar"></p>`;
+                }
+            }
+
+            const preview = document.getElementById('preview');
+            preview.style.display = 'block';
+        }
+    </script>
+</body>
+</html>
